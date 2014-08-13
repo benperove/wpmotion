@@ -84,8 +84,8 @@ class MaintenanceMode {
 	//	do_action('admin_notices');
 		
 		//$this->mm_close_comments();
-		wp_register_style( 'mm-css', plugins_url('../assets/css/mm.css', __FILE__) );
-		wp_enqueue_style( 'mm-css' );
+//		wp_register_style( 'mm-css', plugins_url('../assets/css/mm.css', __FILE__) );
+//		wp_enqueue_style( 'mm-css' );
 		add_action( 'plugins_loaded', array( $this, 'mm_close_comments' ) );
 	//	do_action('plugins_loaded');
 		//do_action( 'mm_close_comments' );	
@@ -113,7 +113,7 @@ class MaintenanceMode {
 	public function mm_load_admin_head() 
 	{
 //		wp_enqueue_script( 'mm-js' );
-		wp_enqueue_script( 'mm-js', plugins_url('wp-motion/assets/js/mm.js'), array('jquery'), FALSE, TRUE );
+//		wp_enqueue_script( 'mm-js', plugins_url('wp-motion/assets/js/mm.js'), array('jquery'), FALSE, TRUE );
 	}
 
 	/**

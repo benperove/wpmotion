@@ -20,6 +20,8 @@ if ( ! defined( 'WPM_PLUGIN_URL' ) )
 if ( ! defined( 'WPM_REQUIRED_PHP_VERSION' ) )
 	define( 'WPM_REQUIRED_PHP_VERSION', '5.2.4' );
 
+define( 'WPM_REQUIRED_WP_VERSION', '3.2' );
+
 //hook in activation/deactivation actions
 register_activation_hook( WPM_PLUGIN_SLUG . '/wp-motion.php', 'wpm_activate' );
 register_deactivation_hook( WPM_PLUGIN_SLUG . '/wp-motion.php', 'wpm_deactivate' );
@@ -69,25 +71,18 @@ $wpm_plugin_version = $wp_version;
 
 
 /**
- * add plugin to tools menu
+ * add plugin to add main menu & create submenus
  *
  * @return void
  */
 function wpm_admin_actions() {
 
-	add_management_page( 'WP Motion', 'WP Motion', 'manage_options', __FILE__, 'wpm_admin' );
+	add_menu_page( 'WP Motion', 'WP Motion', 'manage_options', __FILE__, 'wpm_admin', 'dashicons-migrate' );
+	add_submenu_page( __FILE__, 'WP Motion ', 'One-Click Migration', 'manage_options', __FILE__, 'wpm_admin' );
+	add_submenu_page( __FILE__, 'DNS', 'Business Class DNS', 'manage_options', 'dns', 'wpm_dns' );
 
 }
 add_action( 'admin_menu', 'wpm_admin_actions' );
-
-//check to see if a shell command exists
-function cmd_exists( $cmd ) {
-
-	$return = shell_exec( "command -v $cmd" );
-	return ( empty( $return ) ? false : true );
-	
-} 
-add_filter( 'cmd_exists', 'cmd_exists' );
 
 /**
  * require functions & classes, if they exist
@@ -267,17 +262,6 @@ function wpm_init() {
 }
 add_action( 'admin_init', 'wpm_init' );
 
-function wpm_admin_styles() {
-
-	wp_register_style( 'jquery_ui_css', plugins_url( 'wp-motion/assets/css/jquery-ui-1.10.4.custom.css' ) );
-	wp_enqueue_style( 'jquery_ui_css' );
-	wp_register_style( 'wpm_css', plugins_url( 'wp-motion/assets/css/wp-motion.css' ) );
-	wp_enqueue_style( 'wpm_css' );
-	//wp_register_style( 'wp-polls', 'http://internetmoving.co/wp-content/plugins/wp-polls/polls-css.css?ver=2.63' );
-	//wp_enqueue_style( 'wp-polls' );
-}
-add_action( 'set_admin_styles', 'wpm_admin_styles' );
-
 function maintenance_mode_enter() {
 
 	$mm = new MaintenanceMode;
@@ -309,21 +293,33 @@ function maintenance_mode() {
 add_action( 'maintenance_mode', 'maintenance_mode' );
 do_action( 'maintenance_mode' );
 
-function wpm_enqueue_admin_scripts() {
+function wpm_admin_enqueue_scripts() {
 
-	wp_deregister_script( 'jquery-ui' );
-	wp_register_script( 'jquery-ui', 'https://code.jquery.com/ui/1.10.4/jquery-ui.js' );
+	//load js
+	//wp_enqueue_script( 'jquery-ui-core' ); //doesn't work, need to load it manually
+	wp_register_script( 'jquery-ui', 'https://code.jquery.com/ui/1.11.0/jquery-ui.min.js' );
 	wp_enqueue_script( 'jquery-ui' );
-	wp_deregister_script( 'jquery' );
-	wp_register_script( 'jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js');
+
+	//load css
+	wp_register_style( 'jquery_ui_css', plugins_url( 'wp-motion/assets/css/jquery-ui.min.css' ) );
+	wp_enqueue_style( 'jquery_ui_css' );
+	wp_register_style( 'jquery_ui_theme_css', plugins_url( 'wp-motion/assets/css/jquery-ui.theme.min.css' ) );
+	wp_enqueue_style( 'jquery_ui_theme_css' );
+	wp_register_style( 'wpm_css', plugins_url( 'wp-motion/assets/css/wpmotion.css' ) );
+	wp_enqueue_style( 'wpm_css' );
+
+	//load maintenance mode scripts
+	wp_enqueue_script( 'mm-js', plugins_url( 'wp-motion/assets/js/mm.js' ), array( 'jquery' ), FALSE, TRUE );
+	wp_register_style( 'mm-css', plugins_url( 'wp-motion/assets/css/mm.css', __FILE__ ) );
+	wp_enqueue_style( 'mm-css' );
 
 }
-add_action( 'enqueue_admin_scripts', 'wpm_enqueue_admin_scripts' );
+add_action( 'admin_enqueue_scripts', 'wpm_admin_enqueue_scripts' );
 
 function wpm_admin_head() {
 
-	do_action( 'set_admin_styles' );
-	do_action( 'enqueue_admin_scripts' );
+	//do_action( 'set_admin_styles' );
+	//do_action( 'admin_enqueue_scripts' );
 
 }
 add_action( 'admin_head', 'wpm_admin_head' );
@@ -348,48 +344,57 @@ function wpm_admin() {
 	//get license key from migration server & add to db
 	//change state from 0 to 1
 	if ( isset($_POST['get_started']) && $wpm_state == '0' ) {
-		$wpm_first_name = urlencode( get_user_meta($uid, 'first_name', true) );
-		$wpm_last_name  = urlencode( get_user_meta($uid, 'last_name', true) );
-		$admin_email    = urlencode( get_option( 'admin_email' ) );
-		$domain		 = urlencode( $domain );
 
-		//setup the inital request		
-		$callback = 'WPMotion' . uniqid();
-		$data     = array( 'callback' => $callback, 'first_name' => $wpm_first_name, 'last_name' => $wpm_last_name, 'email' => $admin_email, 'url' => $domain );
-		$json     = '?json=' . json_encode( $data );
-		$url      = 'https://go.wpmotion.co/main/plugin_signup' . $json;
+		if ( ! empty( $_POST['agree'] ) && $_POST['agree'] == 'true' ) {
 
-		//make request	
-		$response = wp_remote_get( $url, array( 'user-agent' => user_agent(), ) );
+			//gather required information
+			$wpm_first_name = urlencode( get_user_meta( $uid, 'first_name', true ) );
+			$wpm_last_name  = urlencode( get_user_meta( $uid, 'last_name', true ) );
+			$admin_email    = urlencode( get_option( 'admin_email' ) );
+			$domain		 = urlencode( $domain );
 
-		//get response	
-		if ( $response['response']['code'] == 200 ) 
-		{
-			$json = preg_replace("/^[" . $callback . "\[]+|[\]]$/x", "", $response['body']);
-			if ( $json ) {
-				$data = json_decode( $json, true );
+			//setup the inital request
+			//$wpmotion->json_request() requires a license key, so the first request is setup manually
+			$callback = 'WPMotion' . uniqid();
+			$data     = array( 'callback' => $callback, 'first_name' => $wpm_first_name, 'last_name' => $wpm_last_name, 'email' => $admin_email, 'url' => $domain );
+			$json     = '?json=' . json_encode( $data );
+			$url      = 'https://go.wpmotion.co/main/plugin_signup' . $json;
+
+			//make request
+			$result   = wp_remote_get( $url, array( 'user-agent' => user_agent(), ) );
+
+			//get response	
+			if ( $result['response']['code'] == 200 ) 
+			{
+				$json = preg_replace("/^[" . $callback . "\[]+|[\]]$/x", "", $result['body']);
+				if ( $json ) {
+					$data = json_decode( $json, true );
+				} else {
+					$wpm_error = 'There was a problem interpreting the request.';
+				}
 			} else {
-				$wpm_error = 'There was a problem interpreting the request.';
+				$code      = $result['response']['code'];
+				$message   = $result['response']['message'];
+				$wpm_error = 'Error ' . $code . ': ' . $message . '<br />There was a problem communicating with the migration server.';		
 			}
-		} else {
-			$code      = $response['response']['code'];
-			$message   = $response['response']['message'];
-			$wpm_error = 'Error ' . $code . ': ' . $message . '<br />There was a problem communicating with the migration server.';		
-		}
 
-		//process response
-		if ( $data['OK'] ) {
-			$hosts_export = var_export( $data['destination_hosts'], true );
-			update_option( 'wpmotion_destination_hosts', $hosts_export );
-			$wpm_license_key = $data['license_key'];
-			add_option( 'wpmotion_license_key', $wpm_license_key );
-			update_option( 'wpmotion_state', '1' );
-			$wpm_state = get_option( 'wpmotion_state' );
-		} else {
-			$wpm_error = $data['reason'];
-		}
+			//process response
+			if ( $data['OK'] ) {
+				$hosts_export = var_export( $data['destination_hosts'], true );
+				update_option( 'wpmotion_destination_hosts', $hosts_export );
+				$wpm_license_key = $data['license_key'];
+				add_option( 'wpmotion_license_key', $wpm_license_key );
+				update_option( 'wpmotion_state', '1' );
+				$wpm_state = get_option( 'wpmotion_state' );
+			} else {
+				$wpm_error = $data['reason'];
+			}
 
-	}
+		} else {
+			$wpm_error = "To get started, please agree to the terms by checking the box.";
+		} //end if - agree
+
+	} //end if - get_started
 
 	//desired host is selected
 	//change state from 1 to 2
@@ -408,7 +413,7 @@ function wpm_admin() {
 			var_dump( $result );
 		}
 
-	} elseif ( $_GET['change_selected_host'] == 'TRUE') {
+	} elseif ( ! empty( $_GET['change_selected_host'] ) && $_GET['change_selected_host'] == 'TRUE') {
 		update_option( 'wpmotion_selected_host', NULL );
 		update_option( 'wpmotion_state', '1' );
 		$wpm_state = get_option( 'wpmotion_state' );
@@ -615,7 +620,7 @@ function wpm_admin() {
 			p {width:570px;}
 		</style>
 		<!-- always display the plugin header -->
-		<h1 style="letter-spacing:6px;">WP Motion<span style="font-variant: small-caps; font-size: 70%; color:#0074a2;"> ⇨ Seamless WordPress Migration</span></h1>
+		<h1 style="letter-spacing:6px;">WP Motion<span style="font-variant: small-caps; font-size: 70%; color:#0074a2;"> ⇨ One-Click Migration</span></h1>
 		<h3>version <?php echo WPM_VERSION ?> by <a href="https://wpmotion.co">WP Motion</a></h3>
 		<?php echo ( get_option( 'wpmotion_license_key' ) ) ? '<strong>Registered to</strong>: <span style="color:green">' . get_option( 'admin_email' ) . '</span><br />' : NULL ?>
 		<?php echo ( get_option( 'wpmotion_license_key' ) ) ? '<strong>License key</strong>: &nbsp; &nbsp; <span style="color:green">' . get_option( 'wpmotion_license_key' ) . '</span><br />' : NULL ?>
@@ -624,26 +629,37 @@ function wpm_admin() {
 		<?php
 			//state 0 - welcome screen & disclaimer
 			if ( $wpm_state == '0' ) {
-				echo '<p style="line-height:175%; position:relative; top:-20px;">WP Motion is a WordPress plugin that makes it easy for you to move your WordPress site to another 
-					hosting company. Regardless as to where your site is presently hosted, WP Motion does all the heavy lifting and checks to make sure 
-					that everything is in place prior to switchover. In no time at all, you will have completed a migration of your WordPress site to the host of your choice.</p>';
+				echo '<p style="line-height:175%; position:relative; top:-20px;">WP Motion is a WordPress plugin that makes it easy to move your WordPress site between 
+					hosting providers. WP Motion does all the heavy lifting and checks to make sure that everything is in place. WP Motion automates all aspects of the
+					migration, including DNS changes. In no time at all, you will have completed a migration of your WordPress site to the next host. To get started,
+					agree to the terms by checking the box, and click the blue "Get Started" button.</p>';
 
-					$response = wp_remote_get( 'https://go.wpmotion.co/main/ssl_check' );
-					if ($response['response']['code'] == '200') {
-						echo '<p style="color:green"><img src="https://go.wpmotion.co/public/assets/img/secure-connection.png" class="ssl_connection" />All migration activities are secured by 256-bit SSL encryption</p>';
-					}
+				$textarea  = "To make one-click migration possible, WP Motion requires specific pieces of information in order to uniquely identify your site, and to ";
+				$textarea .= "conduct the migration using strict levels of security.\n\n";
+				$textarea .= "Privacy\n\nThis plugin uses an external migration server to facilitate an automatic migration. As such, the following pieces of information ";
+				$textarea .= "will be shared with WP Motion:\n\n\tWordPress site URL\n\tAdmin email address\n\tSource host credentials\n\tDestination host credentials\n\n";
+				$textarea .= "Security\n\nWhen your migration is taking place, all password information is salted and hashed using modern cryptographic algorithms (before ";
+				$textarea .= "it ever hits the database). The key which is used to decrypt hashed passwords exists on an external server. Thus, for the duration of the ";
+				$textarea .= "migration, your information is in good hands.\n\nFollowing the migration, your information will be completely purged from our servers & ";
+				$textarea .= "databases. For increased protection, you may wish to set a temporary password for your hosting accounts prior to the migration, then change ";
+				$textarea .= "back to your normal password after the migration is complete.";
 
 				echo '<form action="" method="POST">';
-				//echo '<form action="" method="post" onsubmit="javascript:migration_server_request(); return false;">';
-				//echo '<input type="hidden" name="ref" value="<?php $admin_url = admin_url(); echo $admin_url."/options-general.php?page=click2call/click2call.php"; ">'; //removed end php braces after ;
-				//$admin_url = admin_url();
+				echo "<textarea readonly style='width:555px; height:150px; resize:none;'>$textarea</textarea><br />";
+				echo '<input type="checkbox" name="agree" value="true" style="margin:10px 7px 12px 0;" >I understand and agree to share this information with WP Motion<br>';
+
+				$response = wp_remote_get( 'https://go.wpmotion.co/main/ssl_check' );
+				if ($response['response']['code'] == '200') {
+					echo '<p style="color:green"><img src="https://go.wpmotion.co/public/assets/img/secure-connection.png" class="ssl_connection" />All migration activities are secured by 256-bit SSL encryption</p>';
+				}
+
 				echo '<input type="hidden" id="ref" name="ref" value="' . admin_url() . 'tools.php?page=wp-motion/wp-motion.php">';
-				echo '<input type="hidden" id="admin_email" name="admin_email" value="'.get_option( 'admin_email' ).'">';
+				echo '<input type="hidden" id="admin_email" name="admin_email" value="' . get_option( 'admin_email' ) . '">';
 				echo '<input type="submit" name="get_started" value="Get Started With Your Migration" class="button-primary" />';
 				echo '</form>';
 				echo '<br />';
 				echo '<div id="wpmotion-result"></div>';
-				echo '<div id="wpmotion-error">' . (isset($wpm_error) ? $wpm_error . ' <br />Please contact support at 1-866-386-4592' : '') . '</div>';
+				echo '<div id="wpmotion-error">' . ( isset( $wpm_error ) ? $wpm_error . ' <br />For immediate assistance, please call support at 1-866-386-4592' : '' ) . '</div>';
 			}
 
 			//state 1 - host selection
@@ -661,10 +677,10 @@ function wpm_admin() {
 								foreach ( $destination_hosts as $host => $enabled ) {
 									//if array value is enabled, light up the option
 									if ( $destination_hosts[$host] == 'enabled' ) {
-										echo '<option value="'.$host.'">'.$host.'</option>';
+										echo '<option value="' . $host . '">' . $host . '</option>';
 									} else {
-										echo '<option value="'.$host.'" '.$destination_hosts[$host].'>'.$host.'</option>';
-									}						
+										echo '<option value="' . $host . '" ' . $destination_hosts[$host] . '>' . $host . '</option>';
+									}
 								}
 							?>
 							</select></td></tr>
@@ -866,6 +882,25 @@ function wpm_admin() {
 	<?php
 
 } //end function wp_admin
+
+function wpm_dns() {
+
+?>
+		<style>
+			p {width:570px;}
+		</style>
+		<!-- always display the plugin header -->
+		<h1 style="letter-spacing:6px;">WP Motion<span style="font-variant: small-caps; font-size: 70%; color:#0074a2;"> ⇨ Business Class DNS</span></h1>
+		<h3>version <?php echo WPM_VERSION ?> by <a href="https://wpmotion.co">WP Motion</a></h3>
+		<?php echo ( get_option( 'wpmotion_license_key' ) ) ? '<strong>Registered to</strong>: <span style="color:green">' . get_option( 'admin_email' ) . '</span><br />' : NULL ?>
+		<?php echo ( get_option( 'wpmotion_license_key' ) ) ? '<strong>License key</strong>: &nbsp; &nbsp; <span style="color:green">' . get_option( 'wpmotion_license_key' ) . '</span><br />' : NULL ?>
+		<?php echo ( get_option( 'wpmotion_selected_host' ) ) ? '<strong>Selected host</strong>: <span style="color:green">' . get_option( 'wpmotion_selected_host' ) . '</span>' : NULL ?>
+		<?php echo ( get_option( 'wpmotion_state' ) == '2' ) ? ' [<a href="' . $ref . '&change_selected_host=TRUE">change</a>]<br />' : '<br /><br />' ?>
+		<p>Coming soon!</p>
+<?php
+
+}
+add_action( 'wpm_dns', 'wpm_dns' );
 
 function wpm_activate() {
 

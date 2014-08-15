@@ -57,13 +57,13 @@ if ( version_compare( $wp_version, WPM_REQUIRED_WP_VERSION, '<' ) ) {
 //require functions & classes, if they exist
 foreach ( glob( WPM_PLUGIN_PATH . 'functions/*.php' ) as $filename ) {
 
-	require_once($filename);
+	require_once( $filename );
 
 }
 
 foreach ( glob( WPM_PLUGIN_PATH . 'classes/*.php' ) as $filename ) {
 
-	require_once($filename);
+	require_once( $filename );
 
 }
 

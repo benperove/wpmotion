@@ -250,7 +250,7 @@ add_action( 'mm_exit', 'maintenance_mode_exit' );
  **/
 function maintenance_mode() {
 
-	if ( get_option( 'wpmotion_maintenance_mode') )
+	if ( get_option( 'wpmotion_maintenance_mode' ) )
 	{
 		$enabled = get_option( 'wpmotion_maintenance_mode' );
 		if ($enabled == '1') {
@@ -339,7 +339,7 @@ function wpm_admin() {
 			$wpm_first_name = urlencode( get_user_meta( $uid, 'first_name', true ) );
 			$wpm_last_name  = urlencode( get_user_meta( $uid, 'last_name', true ) );
 			$admin_email    = urlencode( get_option( 'admin_email' ) );
-			$domain		 = urlencode( $domain );
+			$domain         = urlencode( $domain );
 
 			//setup the inital request
 			//$wpmotion->json_request() requires a license key, so the first request is setup manually
@@ -472,8 +472,8 @@ function wpm_admin() {
 			$url = "https://my.wpengine.com/installs#add_install_form";
 			header( 'Location: ' . $url );
 		} else {
-			$data     = array( 'selected_install' => $selected_install );
-			$result   = $wpmotion->json_request( 'selected_install', $data );
+			$data   = array( 'selected_install' => $selected_install );
+			$result = $wpmotion->json_request( 'selected_install', $data );
 		}
 
 		if ( $result['OK'] ) {

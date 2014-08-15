@@ -408,13 +408,13 @@ function wpm_admin() {
 		update_option( 'wpmotion_state', '1' );
 		$wpm_state = get_option( 'wpmotion_state' );
 	}
-	
+
 	//create hosting account button pressed
 	if ( isset( $_POST['wpm_host_signup'] ) && $wpm_state == '2' ) {
 		//setup the request
 		$license_key = get_option( 'wpmotion_license_key' );	
 		$data        = array( 'license_key' => get_option( 'wpmotion_license_key' ) );
-	
+
 		//make request	
 		$result      = $wpmotion->json_request( 'host_signup', $data );
 
@@ -442,7 +442,7 @@ function wpm_admin() {
 		$password = $_POST['password'];
 		$data     = array( 'username' => $username, 'password' => $password, 'host' => 'WP Engine', 'ref' => $ref, 'domain' => $domain );
 		$result   = $wpmotion->json_request( 'check_credentials', $data );
-	
+
 		if ( $result['OK'] && isset($result['installs']) ) {
 			if ( isset( $result['sourcehost'] ) ) {
 				$sourcehost = $result['sourcehost'];
@@ -501,7 +501,7 @@ function wpm_admin() {
 		$sourcehost = $_POST['sourcehost'];
 		$doc_root   = get_home_path();
 		$data       = array( 'username' => $username, 'password' => $password, 'host' => $sourcehost, 'ref' => $ref, 'domain' => $domain, 'doc_root' => $doc_root );
-		
+
 		//make request
 		$result     = $wpmotion->json_request( 'check_credentials', $data );
 
@@ -725,53 +725,53 @@ function wpm_admin() {
 				</style>
 				<script>
 				(function poll() {
-				    setTimeout(function () {
-				    	var key = '<?php echo get_option( 'wpmotion_license_key' ); ?>';
-				        jQuery.ajax({
-				            type: 'GET',
-				            dataType: 'json',
-				            url: 'https://go.wpmotion.co/main/migration_status?license_key=' + key,
-				            success: function (data) {
-				            		var test            = data.pct.trim();
-				            		var progressbar     = jQuery( "#migrationstatus" ),
-				            		    progressbar2    = jQuery( "#migration-substatus" ),
-				            		    migrationdetail = jQuery( "#migrationdetail" ),
-      							    progresslabel   = jQuery( ".progress-label" ),
-      							    progresslabel2  = jQuery( ".progress-substatus" );
+					setTimeout(function () {
+						var key = '<?php echo get_option( 'wpmotion_license_key' ); ?>';
+						jQuery.ajax({
+							type: 'GET',
+							dataType: 'json',
+							url: 'https://go.wpmotion.co/main/migration_status?license_key=' + key,
+							success: function (data) {
+									var test            = data.pct.trim();
+									var progressbar     = jQuery( "#migrationstatus" ),
+									    progressbar2    = jQuery( "#migration-substatus" ),
+									    migrationdetail = jQuery( "#migrationdetail" ),
+									    progresslabel   = jQuery( ".progress-label" ),
+									    progresslabel2  = jQuery( ".progress-substatus" );
 
-      							    migrationdetail.html( "<p>" + data.stat + "</p>" );
+									migrationdetail.html( "<p>" + data.stat + "</p>" );
 
-								progressbar.progressbar({
-								 	value: parseInt( data.pct ),
-								 	change: function() {
-       									progresslabel.text( data.pct + "%" );
-     								},
-      								complete: function() {
-        									progresslabel.text( "Complete!" );
-        									document.getElementById( "proceed" ).style.display = "";
-        									var complete = "<?php update_option( 'wpmotion_maintenance_mode', '0' ); ?>";
-     								}
-								});
-
-								if ( typeof(data.substatus) != "undefined" ) {
-									document.getElementById( "migration-substatus" ).style.display = "";
-									progressbar2.progressbar({
-									 	value: parseInt( data.substatus ),
-									 	change: function() {
-	       									progresslabel2.text( data.substatus + "%" );
-	     								},
-	      								complete: function() {
-	        									progresslabel2.text( "Done." );
-	     								}
+									progressbar.progressbar({
+										value: parseInt( data.pct ),
+										change: function() {
+											progresslabel.text( data.pct + "%" );
+										},
+										complete: function() {
+											progresslabel.text( "Complete!" );
+											document.getElementById( "proceed" ).style.display = "";
+											var complete = "<?php update_option( 'wpmotion_maintenance_mode', '0' ); ?>";
+										}
 									});
-								} else {
-									document.getElementById( "migration-substatus" ).style.display = "none";
-								}
 
-				            },
-				            complete: poll
-				        });
-				    }, 10000);
+									if ( typeof(data.substatus) != "undefined" ) {
+										document.getElementById( "migration-substatus" ).style.display = "";
+										progressbar2.progressbar({
+											value: parseInt( data.substatus ),
+											change: function() {
+												progresslabel2.text( data.substatus + "%" );
+											},
+											complete: function() {
+												progresslabel2.text( "Done." );
+											}
+										});
+									} else {
+										document.getElementById( "migration-substatus" ).style.display = "none";
+									}
+
+							}, //end success
+							complete: poll
+						});
+					}, 10000);
 				})();
 				</script>
 				<?php
@@ -780,8 +780,8 @@ function wpm_admin() {
 				echo '<div id="migrationdetail"></div>';
 
 				//echo '<br /><div id="proceed" style="display:none;"><form action="" method="POST">';
-	  			//echo '<input type="submit" name="verify_site" value="Verify new site »" class="button-primary">';
-	  			//echo '</form></div>';	
+				//echo '<input type="submit" name="verify_site" value="Verify new site »" class="button-primary">';
+				//echo '</form></div>';	
 			}
 
 			if ( $wpm_state == '10' ) {

@@ -4,7 +4,7 @@ Plugin Name: WP Motion
 Plugin URI: https://wpmotion.co
 Description: A plugin/service that automates WordPress migrations between hosting providers.
 Author: Benjamin Perove
-Version: 0.9.0
+Version: 0.9.4
 Author URI: http://benperove.com
 */
 
@@ -17,14 +17,17 @@ if ( ! defined( 'WPM_PLUGIN_PATH' ) )
 if ( ! defined( 'WPM_PLUGIN_URL' ) )
 	define( 'WPM_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
+if ( ! defined( 'WPM_PLUGIN_FILENAME' ) )
+	define( 'WPM_PLUGIN_FILENAME', basename( __FILE__ ) );
+
 if ( ! defined( 'WPM_REQUIRED_PHP_VERSION' ) )
 	define( 'WPM_REQUIRED_PHP_VERSION', '5.2.4' );
 
 define( 'WPM_REQUIRED_WP_VERSION', '3.2' );
 
 //hook in activation/deactivation actions
-register_activation_hook( WPM_PLUGIN_SLUG . '/wp-motion.php', 'wpm_activate' );
-register_deactivation_hook( WPM_PLUGIN_SLUG . '/wp-motion.php', 'wpm_deactivate' );
+register_activation_hook( WPM_PLUGIN_SLUG . '/' . WPM_PLUGIN_FILENAME, 'wpm_activate' );
+register_deactivation_hook( WPM_PLUGIN_SLUG . '/' . WPM_PLUGIN_FILENAME, 'wpm_deactivate' );
 register_uninstall_hook( WPM_PLUGIN_SLUG . '/uninstall.php', 'wpm_uninstall' );
 
 //don't activate on anything less than php 5.2.4
@@ -254,7 +257,6 @@ function maintenance_mode() {
 	if ( get_option( 'wpmotion_maintenance_mode') )
 	{
 		$enabled = get_option( 'wpmotion_maintenance_mode' );
-		echo "mm enabled: $enabled\n";
 		if ($enabled == '1') {
 			do_action( 'mm_enter' );
 		} else {
@@ -280,17 +282,17 @@ function wpm_admin_enqueue_scripts() {
 	wp_enqueue_script( 'jquery-effects-fade' );
 
 	//load css
-	wp_register_style( 'jquery_ui_css', plugins_url( 'wp-motion/assets/css/jquery-ui.min.css' ) );
+	wp_register_style( 'jquery_ui_css', plugins_url( WPM_PLUGIN_SLUG . '/assets/css/jquery-ui.min.css' ) );
 	wp_enqueue_style( 'jquery_ui_css' );
-	wp_register_style( 'jquery_ui_theme_css', plugins_url( 'wp-motion/assets/css/jquery-ui.theme.min.css' ) );
+	wp_register_style( 'jquery_ui_theme_css', plugins_url( WPM_PLUGIN_SLUG . '/assets/css/jquery-ui.theme.min.css' ) );
 	wp_enqueue_style( 'jquery_ui_theme_css' );
-	wp_register_style( 'wpm_css', plugins_url( 'wp-motion/assets/css/wpmotion.css' ) );
+	wp_register_style( 'wpm_css', plugins_url( WPM_PLUGIN_SLUG . '/assets/css/wpmotion.css' ) );
 	wp_enqueue_style( 'wpm_css' );
 
 	//load maintenance mode scripts
 	if ( get_option( 'wpmotion_maintenance_mode' ) && get_option( 'wpmotion_maintenance_mode' ) == '1' ) {
-		wp_enqueue_script( 'mm-js', plugins_url( 'wp-motion/assets/js/mm.js' ), array( 'jquery' ), FALSE, TRUE );
-		wp_register_style( 'mm-css', plugins_url( 'wp-motion/assets/css/mm.css' ) );
+		wp_enqueue_script( 'mm-js', plugins_url( WPM_PLUGIN_SLUG . '/assets/js/mm.js' ), array( 'jquery' ), FALSE, TRUE );
+		wp_register_style( 'mm-css', plugins_url( WPM_PLUGIN_SLUG . '/assets/css/mm.css' ) );
 		wp_enqueue_style( 'mm-css' );
 	}
 
@@ -327,7 +329,7 @@ function wpm_admin() {
 	//setup vars for migration
 	$wpm_state = get_option( 'wpmotion_state' );
 	$uid       = get_current_user_id(); 
-	$ref       = admin_url() . 'tools.php?page=wp-motion/wp-motion.php';
+	$ref       = admin_url() . 'admin.php?page=' . WPM_PLUGIN_SLUG . '/' . WPM_PLUGIN_FILENAME;
 	$domain    = str_replace( array( 'http://', 'https://' ), '', get_site_url() );
 	$wpm_error = NULL;
 	$wpmotion  = new wpmotion();
@@ -574,7 +576,7 @@ function wpm_admin() {
 					echo '<p style="color:green"><img src="https://go.wpmotion.co/public/assets/img/secure-connection.png" class="ssl_connection" />All migration activities are secured by 256-bit SSL encryption</p>';
 				}
 
-				echo '<input type="hidden" id="ref" name="ref" value="' . admin_url() . 'tools.php?page=wp-motion/wp-motion.php">';
+				echo '<input type="hidden" id="ref" name="ref" value="' . admin_url() . 'admin.php?page=' . WPM_PLUGIN_SLUG . '/' . WPM_PLUGIN_FILENAME . '">';
 				echo '<input type="hidden" id="admin_email" name="admin_email" value="' . get_option( 'admin_email' ) . '">';
 				echo '<input type="submit" name="get_started" value="Get Started With Your Migration" class="button-primary" />';
 				echo '</form>';
@@ -652,7 +654,7 @@ function wpm_admin() {
 					<form action="" method="POST">
 						<input type="text" name="username" value="Username" onfocus="if (this.value=='Username') this.value='';" ></td></tr>
 						<tr><td><input type="password" name="password" value="Password" onfocus="if (this.value=='Password') this.value='';"></td></tr>
-						<input type="hidden" name="ref" value="<?php echo admin_url() . 'tools.php?page=wp-motion/wp-motion.php'; ?>">
+						<input type="hidden" name="ref" value="<?php echo admin_url() . 'admin.php?page=' . WPM_PLUGIN_SLUG . '/' . WPM_PLUGIN_FILENAME; ?>">
 						<tr><td><input type="submit" name="submit_credentials" value="Next" class="button-primary" />
 					</form></td></tr>
 				</table>
@@ -698,7 +700,7 @@ function wpm_admin() {
 						<form action="" method="POST">
 							<input type="text" name="username" value="Username" onfocus="if (this.value=='Username') this.value='';" ></td></tr>
 							<tr><td><input type="password" name="password" value="Password" onfocus="if (this.value=='Password') this.value='';"></td></tr>
-							<input type="hidden" name="ref" value="<?php echo admin_url() . 'tools.php?page=wp-motion/wp-motion.php'; ?>">
+							<input type="hidden" name="ref" value="<?php echo admin_url() . 'admin.php?page=' . WPM_PLUGIN_SLUG . '/' . WPM_PLUGIN_FILENAME; ?>">
 							<input type="hidden" name="sourcehost" value="<?php echo get_option( 'wpmotion_sourcehost' ); ?>">
 							<tr><td><input type="submit" name="submit_credentials" value="Next" class="button-primary" />
 						</form></td></tr>
@@ -824,7 +826,7 @@ function wpm_dns() {
 	<h3>version <?php echo WPM_VERSION ?> by <a href="https://wpmotion.co">WP Motion</a></h3>
 	<?php echo ( get_option( 'wpmotion_license_key' ) ) ? '<strong>Registered to</strong>: <span style="color:green">' . get_option( 'admin_email' ) . '</span><br />' : NULL ?>
 	<?php echo ( get_option( 'wpmotion_license_key' ) ) ? '<strong>License key</strong>: &nbsp; &nbsp; <span style="color:green">' . get_option( 'wpmotion_license_key' ) . '</span><br />' : NULL ?>
-	<p>"Simply the best DNS solution for WordPress in existence."</p><p>For more information, <a href="https://wpmotion.co/dns">visit our site</a>.</p>
+	<p>"Simply the best DNS solution available for WordPress. Period."</p><p>To find out how you can benefit from our Business Class DNS, <a href="https://wpmotion.co/dns">visit our site</a>.</p>
 <?php
 }
 add_action( 'wpm_dns', 'wpm_dns' );

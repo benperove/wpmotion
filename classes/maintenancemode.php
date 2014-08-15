@@ -1,9 +1,7 @@
 <?php
 
 /**
- *
- * Adapted from code-freeze by Kevin Davis
- *
+ * adapted from code-freeze by Kevin Davis
  */
 class MaintenanceMode {
 
@@ -32,6 +30,8 @@ class MaintenanceMode {
 //			add_filter( 'bbp_current_user_can_access_create_topic_form', mm_close_bbp_comments );		
 //		}
 	}
+
+	// -----------------------------------------------------------------------------
 		
 	/**
 	 * Insert text onto login page
@@ -43,6 +43,8 @@ class MaintenanceMode {
 		$message = '<p style="padding:10px;border: 2px solid red; margin-bottom: 10px;"><span style="color:red;font-weight:bold;">'.__('Maintenance Mode Notice', 'codefreeze' ).':</span><br/>'.__('This site is currently being migrated to a new location. Changes made here will not be reflected in the migrated site. To avoid lost work, please do not make any changes to the site until this message is removed.', 'codefreeze' ).'</p>';
 		return $message;
 	}
+
+	// -----------------------------------------------------------------------------
 			
 	/**
 	 * Show notice on site pages when site disabled
@@ -54,6 +56,8 @@ class MaintenanceMode {
 		echo '<div class="error"><p><strong>'.__('Maintenance Mode Enabled:', 'maintenancemode').'</strong> '.__('All changes will be discarded during site migration.', 'maintenancemode' ).'</p></div>';
 	}
 		
+	// -----------------------------------------------------------------------------
+
 	/**
 	 * Register javascript, disable quickpress widget, remove add/edit menu items
 	 *
@@ -104,6 +108,8 @@ class MaintenanceMode {
 	//	add_filter( 'plugin_action_links', 'mm_plugin_action_links', 10, 2 );
 
 	}
+
+	// -----------------------------------------------------------------------------
 	
 	/**
 	 * Load javascript on all admin pages
@@ -115,6 +121,8 @@ class MaintenanceMode {
 //		wp_enqueue_script( 'mm-js' );
 //		wp_enqueue_script( 'mm-js', plugins_url('wp-motion/assets/js/mm.js'), array('jquery'), FALSE, TRUE );
 	}
+
+	// -----------------------------------------------------------------------------
 
 	/**
 	 * Close comments and trackbacks while activated
@@ -158,6 +166,8 @@ class MaintenanceMode {
 		}
 	}
 
+	// -----------------------------------------------------------------------------
+
 	/**
 	 * Remove media upload button(s)
 	 *
@@ -167,6 +177,8 @@ class MaintenanceMode {
 	{
 		remove_action( 'media_buttons', 'media_buttons' );
 	}
+
+	// -----------------------------------------------------------------------------
 	
 	/**
 	 * Set visual editor as "read only"
@@ -179,6 +191,8 @@ class MaintenanceMode {
 		error_reporting(0);
 		return $args['readonly'] = 1;
 	}
+
+	// -----------------------------------------------------------------------------
 	
 	/**
 	 * Remove invalid action links
@@ -199,6 +213,8 @@ class MaintenanceMode {
 		
 		return $actions;
 	}
+
+	// -----------------------------------------------------------------------------	
 	
 	/**
 	 * Remove add/edit menu items
@@ -222,7 +238,9 @@ class MaintenanceMode {
 		remove_submenu_page('tools.php', 'import.php');
 		remove_submenu_page('update-core.php', 'upgrade.php');
 	}
-	
+
+	// -----------------------------------------------------------------------------
+
 	/**
 	 * Remove Activation/Deactivation/Edit links for all plugins but this one
 	 *
@@ -239,6 +257,8 @@ class MaintenanceMode {
 		}
 		return $links;
 	}
+
+	// -----------------------------------------------------------------------------
 	
 	/**
 	 * Remove topic replies and new topics from bbPress
@@ -262,6 +282,8 @@ class MaintenanceMode {
 		wp_deregister_script( 'mm-js' );
 	}
 
+	// -----------------------------------------------------------------------------
+
 	public function mm_open_comments()
 	{
 
@@ -269,6 +291,8 @@ class MaintenanceMode {
 		remove_filter( 'comments_open', 'mm_close_the_comments' );
 		remove_filter( 'pings_open', 'mm_close_the_comments' );
 	}
+
+	// -----------------------------------------------------------------------------
 
 	public function mm_visedit_readonly_disabled() 
 	{

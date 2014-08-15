@@ -4,7 +4,7 @@
  */
 
 /**
- * WPMotion class definition
+ * wpmotion class definition
  */
 class WPMotion {
 
@@ -56,27 +56,6 @@ class WPMotion {
 
 	// -----------------------------------------------------------------
 
-	/**
-	 * initiates the migration - NOT IN USE
-	 *
-	 * @return void
-	 */
-/*	public function do_migration() {
-		$url      = get_bloginfo( 'url' );
-		$url      = preg_replace( "(https?://)", "", $url );
-		$data     = array( 'url' => $url );
-		$result   = $this->json_request( 'do_migration', $data );
-		if ( $result['OK'] ) {
-			update_option( 'wpmotion_state', '9' );
-			$wpm_state = get_option( 'wpmotion_state' );
-		} elseif ( $result['ERROR'] ) {
-			$wpm_error = $result['reason'];
-		} else {
-			var_dump( $result );
-		}
-	} */
-
-	// -----------------------------------------------------------------
-
 
 }
+

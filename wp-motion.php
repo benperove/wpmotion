@@ -95,9 +95,9 @@ jQuery(document).ready(function($) {
 
 	$('#loading')
 		.bind('ajaxStart', function() {
-	  		$(this).show();
+			$(this).show();
 	}).bind('ajaxComplete', function() {
-	  		$(this).hide();
+			$(this).hide();
 	});
 
 	var data = {
@@ -174,7 +174,7 @@ function wpm_do_migration() {
 	$wpmotion = new wpmotion();
 	$url      = get_bloginfo( 'url' );
 	$url      = preg_replace( '(https?://)', '', $url );
-	$data     = array( 'url' => $url );	
+	$data     = array( 'url' => $url );
 	$result   = $wpmotion->json_request( 'do_migration_from_' . strtolower( get_option( 'wpmotion_sourcehost' ) ), $data );
 	
 	if ( $result['OK'] )
@@ -364,7 +364,7 @@ function wpm_admin() {
 			} else {
 				$code      = $result['response']['code'];
 				$message   = $result['response']['message'];
-				$wpm_error = 'Error ' . $code . ': ' . $message . '<br />There was a problem communicating with the migration server.';		
+				$wpm_error = 'Error ' . $code . ': ' . $message . '<br />There was a problem communicating with the migration server.';
 			}
 
 			//process response
@@ -394,7 +394,7 @@ function wpm_admin() {
 
 		//process response		
 		if ( $result['OK'] ) {
-			update_option( 'wpmotion_selected_host', $host );		
+			update_option( 'wpmotion_selected_host', $host );
 			update_option( 'wpmotion_state', '2' );
 			$wpm_state = get_option( 'wpmotion_state' );
 		}  elseif ( $result['ERROR'] ) {
@@ -443,7 +443,7 @@ function wpm_admin() {
 		$data     = array( 'username' => $username, 'password' => $password, 'host' => 'WP Engine', 'ref' => $ref, 'domain' => $domain );
 		$result   = $wpmotion->json_request( 'check_credentials', $data );
 	
-		if ( $result['OK'] && isset($result['installs']) ) {	
+		if ( $result['OK'] && isset($result['installs']) ) {
 			if ( isset( $result['sourcehost'] ) ) {
 				$sourcehost = $result['sourcehost'];
 				update_option( 'wpmotion_sourcehost', $sourcehost );
@@ -455,7 +455,7 @@ function wpm_admin() {
 			$wpm_state = get_option( 'wpmotion_state' );
 		} elseif ( $result['OK'] ) {
 			update_option( 'wpmotion_state', '4' );
-			$wpm_state = get_option( 'wpmotion_state' );			
+			$wpm_state = get_option( 'wpmotion_state' );
  		} elseif ( $result['ERROR'] ) {
 			$wpm_error = $result['reason'];
 		} else {
@@ -471,7 +471,7 @@ function wpm_admin() {
 			header( 'Location: ' . $url );
 		} else {
 			$data     = array( 'selected_install' => $selected_install );
-			$result   = $wpmotion->json_request( 'selected_install', $data );			
+			$result   = $wpmotion->json_request( 'selected_install', $data );
 		}
 
 		if ( $result['OK'] ) {
@@ -481,7 +481,7 @@ function wpm_admin() {
 				$wpm_state = get_option( 'wpmotion_state' );
 			} else {
 				update_option( 'wpmotion_state', '4' );
-				$wpm_state = get_option( 'wpmotion_state' );						
+				$wpm_state = get_option( 'wpmotion_state' );
 			}
 		} elseif ( $result['ERROR'] ) {
 			$wpm_error = $result['reason'];
@@ -493,14 +493,19 @@ function wpm_admin() {
 		eval( "\$installs = $installs2;" );
 	}
 
+	//get credentials for source host
 	if ( isset( $_POST['submit_credentials'] ) && $wpm_state == '3.2' ) {
+		//setup request vars
 		$username   = $_POST['username'];
 		$password   = $_POST['password'];
 		$sourcehost = $_POST['sourcehost'];
 		$doc_root   = get_home_path();
 		$data       = array( 'username' => $username, 'password' => $password, 'host' => $sourcehost, 'ref' => $ref, 'domain' => $domain, 'doc_root' => $doc_root );
+		
+		//make request
 		$result     = $wpmotion->json_request( 'check_credentials', $data );
 
+		//process request
 		if ( $result['OK'] ) {	
 			update_option( 'wpmotion_state', '4' );
 			$wpm_state = get_option( 'wpmotion_state' );
@@ -511,7 +516,7 @@ function wpm_admin() {
 		}
 	}
 
-	if ( isset($_POST['verify_site']) && $wpm_state == '10' ) {		
+	if ( isset($_POST['verify_site']) && $wpm_state == '10' ) {
 		$url    = get_bloginfo( 'url' );
 		$url    = preg_replace( '(https?://)', '', $url );
 		$data   = array( 'url' => $url );
@@ -662,17 +667,17 @@ function wpm_admin() {
 				<tr><td>
 					<form action="" method="POST">
 						<select name="install" style="width:232px">
-						<?php					
+						<?php
 						foreach ( $installs as $install )
 						{
 							echo '<option value="'.$install.'">'.$install.'</option>';
 						}
 						echo '<option value="add_new_install">Add new install</option>';
-						?>				
+						?>
 						</select></td></tr>
 						<tr><td><input type="submit" name="selected_install" value="Select" class="button-primary" />
 					</form></td></tr>
-				</table>			
+				</table>
 				<div id="wpmotion-result"></div>
 				<div id="wpmotion-error"><?php echo ( isset( $wpm_error ) ? $wpm_error : '' ) ?></div>
 			<?php
@@ -758,7 +763,7 @@ function wpm_admin() {
 	      								complete: function() {
 	        									progresslabel2.text( "Done." );
 	     								}
-									});																		
+									});
 								} else {
 									document.getElementById( "migration-substatus" ).style.display = "none";
 								}

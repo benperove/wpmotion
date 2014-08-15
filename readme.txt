@@ -27,6 +27,15 @@ This section describes how to install the WP Motion migration plugin and get it 
 
 == Frequently Asked Questions ==
 
+What migration paths are supported?
+
+The first supported migration path is:
+	Bluehost -> WP Engine
+
+Will additional paths be supported?
+
+Definitely. Please vote for the hosts you would like [migration support](https://wpmotion.co/supported-hosts) for.
+
 == Screenshots ==
 
 == Changelog ==

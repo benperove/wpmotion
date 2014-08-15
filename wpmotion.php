@@ -55,14 +55,16 @@ if ( version_compare( $wp_version, WPM_REQUIRED_WP_VERSION, '<' ) ) {
 }
 
 //require functions & classes, if they exist
-foreach ( glob( WPM_PLUGIN_PATH . 'functions/*.php' ) as $filename )
-{
+foreach ( glob( WPM_PLUGIN_PATH . 'functions/*.php' ) as $filename ) {
+
 	require_once($filename);
+
 }
 
-foreach ( glob( WPM_PLUGIN_PATH . 'classes/*.php' ) as $filename )
-{
+foreach ( glob( WPM_PLUGIN_PATH . 'classes/*.php' ) as $filename ) {
+
 	require_once($filename);
+
 }
 
 global $wpm_plugin_version;
@@ -180,21 +182,16 @@ function wpm_do_migration() {
 	$data     = array( 'url' => $url );
 	$result   = $wpmotion->json_request( 'do_migration_from_' . strtolower( get_option( 'wpmotion_sourcehost' ) ), $data );
 
-	if ( $result['OK'] )
-	{
+	if ( $result['OK'] ) {
 		update_option( 'wpmotion_maintenance_mode', '1' );
 		update_option( 'wpmotion_state', '9' );
 		$data = array( 'result' => TRUE );
 		return $data;
-	}
-	elseif ( $result['ERROR'] )
-	{
+	} elseif ( $result['ERROR'] ) {
 		$err  = array_keys( $result, FALSE );
 		$data = array( 'result' => FALSE, 'error' => $err );
 		return $data;
-	}
-	else
-	{
+	} else {
 		var_dump( $result );
 	}
 
@@ -809,7 +806,7 @@ function wpm_admin() {
 	</div> <!-- end .wrap -->
 	<?php
 
-} //end wp_admin
+} //end wpm_admin
 
 /**
  * dns function
@@ -817,6 +814,7 @@ function wpm_admin() {
  * @return void 
  **/
 function wpm_dns() {
+
 ?>
 	<style>
 		p {width:570px;}
@@ -828,6 +826,7 @@ function wpm_dns() {
 	<?php echo ( get_option( 'wpmotion_license_key' ) ) ? '<strong>License key</strong>: &nbsp; &nbsp; <span style="color:green">' . get_option( 'wpmotion_license_key' ) . '</span><br />' : NULL ?>
 	<p>"Simply the best DNS solution available for WordPress. Period."</p><p>To find out how you can benefit from our Business Class DNS, <a href="https://wpmotion.co/dns">visit our site</a>.</p>
 <?php
+
 }
 add_action( 'wpm_dns', 'wpm_dns' );
 

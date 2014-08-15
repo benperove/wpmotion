@@ -1,6 +1,5 @@
 === WP Motion ===
 Contributors: bperove
-Donate link:
 Tags: migration, migrate, transfer, move
 Requires at least: 3.0.1
 Tested up to: 3.9.2

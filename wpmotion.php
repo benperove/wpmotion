@@ -543,8 +543,8 @@ function wpm_admin() {
 			p {width:570px;}
 		</style>
 		<!-- always display the plugin header -->
-		<h1 style="letter-spacing:6px;">WP Motion<span style="font-variant: small-caps; font-size: 70%; color:#0074a2;"> ⇨ One Click Migration</span></h1>
-		<h3>version <?php echo WPM_VERSION ?> by <a href="https://wpmotion.co">WP Motion</a></h3>
+		<h1 style="letter-spacing:6px;">One Click Migration<span style="font-variant: small-caps; font-size: 70%; color:#0074a2;"></span></h1>
+		<h3>Version <?php echo WPM_VERSION ?> by <a href="https://wpmotion.co">WP Motion</a></h3>
 		<?php echo ( get_option( 'wpmotion_license_key' ) ) ? '<strong>Registered to</strong>: <span style="color:green">' . get_option( 'admin_email' ) . '</span><br />' : NULL ?>
 		<?php echo ( get_option( 'wpmotion_license_key' ) ) ? '<strong>License key</strong>: &nbsp; &nbsp; <span style="color:green">' . get_option( 'wpmotion_license_key' ) . '</span><br />' : NULL ?>
 		<?php echo ( get_option( 'wpmotion_selected_host' ) ) ? '<strong>Selected host</strong>: <span style="color:green">' . get_option( 'wpmotion_selected_host' ) . '</span>' : NULL ?>
@@ -565,7 +565,7 @@ function wpm_admin() {
 				$textarea .= "it ever hits the database). The key which is used to decrypt hashed passwords exists on an external server. Thus, for the duration of the ";
 				$textarea .= "migration, your information is in good hands.\n\nFollowing the migration, your information will be completely purged from our servers & ";
 				$textarea .= "databases. For increased protection, you may wish to set a temporary password for your hosting accounts prior to the migration, then change ";
-				$textarea .= "back to your normal password after the migration is complete.";
+				$textarea .= "back to your normal password when the migration is complete.";
 
 				echo '<form action="" method="POST">';
 				echo "<textarea readonly style='width:555px; height:150px; resize:none;'>$textarea</textarea><br />";
@@ -612,7 +612,7 @@ function wpm_admin() {
 				</table>
 				<br />
 				<div id="wpmotion-result"></div>
-				<div id="wpmotion-error"><?php echo (isset($wpm_error) ? $wpm_error : '' ) ?></div>
+				<div id="wpmotion-error"><?php echo ( isset( $wpm_error ) ? $wpm_error : '' ) ?></div>
 			<?php
 			}
 
@@ -623,13 +623,13 @@ function wpm_admin() {
 				<?php
 				//create an account button
 				echo '<form action="" method="POST">';
-				echo '<input type="submit" name="wpm_host_signup" value="Create an Account with ' . get_option( 'wpmotion_selected_host' ) . '" class="button-primary" style="width:250px;">&nbsp;⇐ Exclusive deal for WP Motion users: <b>2 Months Free</b>!';
+				echo '<input type="submit" name="wpm_host_signup" value="NEW ACCOUNT&#010;Pre-pay for 1 year of ' . get_option( 'wpmotion_selected_host' ) . '&#010;hosting and get 2 months free!" class="button-primary" style="line-height:17px; height:79px; width:250px; white-space:pre;">';
 				echo '</form>';
 				echo '<br />';
 
 				//already have an account button
 				echo '<form action="" method="POST">';
-				echo '<input type="submit" name="wpm_existing_host" value="I already have an account" class="button-primary" style="width:250px;">';
+				echo '<input type="submit" name="wpm_existing_host" value="EXISTING ACCOUNT" class="button-primary" style="width:250px;">';
 				echo '</form>';
 				echo '<br />';
 				echo '<div id="wpmotion-error">' . ( isset( $wpm_error ) ? $wpm_error : '' ) . '</div>';
@@ -642,7 +642,7 @@ function wpm_admin() {
 	    			echo '<input type="submit" name="wpm_host_confirm" value="Confirm your ' . get_option( 'wpmotion_selected_host' ) . ' account" class="button-primary" style="width:250px;">';
 	    			echo '</form>';
 	    			echo '<br />';
-	    			echo '<div id="wpmotion-error">' . ( isset( $wpm_error ) ? $wpm_error : '' ) . '</div>';				
+	    			echo '<div id="wpmotion-error">' . ( isset( $wpm_error ) ? $wpm_error : '' ) . '</div>';
 			} */
 
 			//state 3 - validate credentials
@@ -822,8 +822,8 @@ function wpm_dns() {
 		p {width:570px;}
 	</style>
 	<!-- always display the plugin header -->
-	<h1 style="letter-spacing:6px;">WP Motion<span style="font-variant: small-caps; font-size: 70%; color:#0074a2;"> ⇨ Business Class DNS</span></h1>
-	<h3>version <?php echo WPM_VERSION ?> by <a href="https://wpmotion.co">WP Motion</a></h3>
+	<h1 style="letter-spacing:6px;">Business Class DNS<span style="font-variant: small-caps; font-size: 70%; color:#0074a2;"></span></h1>
+	<h3>Version <?php echo WPM_VERSION ?> by <a href="https://wpmotion.co">WP Motion</a></h3>
 	<?php echo ( get_option( 'wpmotion_license_key' ) ) ? '<strong>Registered to</strong>: <span style="color:green">' . get_option( 'admin_email' ) . '</span><br />' : NULL ?>
 	<?php echo ( get_option( 'wpmotion_license_key' ) ) ? '<strong>License key</strong>: &nbsp; &nbsp; <span style="color:green">' . get_option( 'wpmotion_license_key' ) . '</span><br />' : NULL ?>
 	<p>"Simply the best DNS solution available for WordPress. Period."</p><p>To find out how you can benefit from our Business Class DNS, <a href="https://wpmotion.co/dns">visit our site</a>.</p>

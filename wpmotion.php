@@ -106,8 +106,7 @@ jQuery(document).ready(function($) {
 	});
 
 	var data = {
-		action: "migration_prep",
-		whatever: 1234
+		action: "migration_prep"
 	};
 
 	$.post(ajaxurl, data, function(response) {

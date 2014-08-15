@@ -176,7 +176,7 @@ function wpm_do_migration() {
 	$url      = preg_replace( '(https?://)', '', $url );
 	$data     = array( 'url' => $url );
 	$result   = $wpmotion->json_request( 'do_migration_from_' . strtolower( get_option( 'wpmotion_sourcehost' ) ), $data );
-	
+
 	if ( $result['OK'] )
 	{
 		update_option( 'wpmotion_maintenance_mode', '1' );
@@ -392,7 +392,7 @@ function wpm_admin() {
 		$data   = array( 'selected_host' =>  $host );
 		$result = $wpmotion->json_request( 'selected_host', $data );
 
-		//process response		
+		//process response
 		if ( $result['OK'] ) {
 			update_option( 'wpmotion_selected_host', $host );
 			update_option( 'wpmotion_state', '2' );
@@ -438,11 +438,15 @@ function wpm_admin() {
 
 	//validate credentials
 	if ( isset( $_POST['submit_credentials'] ) && $wpm_state == '3' ) {
+		//setup request vars
 		$username = $_POST['username'];
 		$password = $_POST['password'];
 		$data     = array( 'username' => $username, 'password' => $password, 'host' => 'WP Engine', 'ref' => $ref, 'domain' => $domain );
+
+		//make request
 		$result   = $wpmotion->json_request( 'check_credentials', $data );
 
+		//process response
 		if ( $result['OK'] && isset($result['installs']) ) {
 			if ( isset( $result['sourcehost'] ) ) {
 				$sourcehost = $result['sourcehost'];
@@ -506,7 +510,7 @@ function wpm_admin() {
 		$result     = $wpmotion->json_request( 'check_credentials', $data );
 
 		//process request
-		if ( $result['OK'] ) {	
+		if ( $result['OK'] ) {
 			update_option( 'wpmotion_state', '4' );
 			$wpm_state = get_option( 'wpmotion_state' );
 		}  elseif ( $result['ERROR'] ) {
@@ -516,7 +520,7 @@ function wpm_admin() {
 		}
 	}
 
-	if ( isset($_POST['verify_site']) && $wpm_state == '10' ) {
+/*	if ( isset($_POST['verify_site']) && $wpm_state == '10' ) {
 		$url    = get_bloginfo( 'url' );
 		$url    = preg_replace( '(https?://)', '', $url );
 		$data   = array( 'url' => $url );
@@ -530,7 +534,7 @@ function wpm_admin() {
 			var_dump( $result );
 		}
 
-	}
+	} */
 	?>
 	<div class="wrap">
 		<style>
@@ -608,26 +612,26 @@ function wpm_admin() {
 				<div id="wpmotion-result"></div>
 				<div id="wpmotion-error"><?php echo (isset($wpm_error) ? $wpm_error : '' ) ?></div>
 			<?php
-			} 
+			}
 
 			//state 2 - hostingaccount creation
 			if ( $wpm_state == '2' && ! get_option( 'wpmotion_create_account_pressed' ) ) {
 			?>
 				<p>Migrating your site to <?php echo get_option( 'wpmotion_selected_host' ); ?> is easy!<br />Click one of the following buttons.</p>
-	    			<?php
-	    			//create an account button
-	    			echo '<form action="" method="POST">';
-	    			echo '<input type="submit" name="wpm_host_signup" value="Create an Account with ' . get_option( 'wpmotion_selected_host' ) . '" class="button-primary" style="width:250px;">&nbsp;⇐ Exclusive deal for WP Motion users: <b>2 Months Free</b>!';
-	    			echo '</form>';
-	    			echo '<br />';
+				<?php
+				//create an account button
+				echo '<form action="" method="POST">';
+				echo '<input type="submit" name="wpm_host_signup" value="Create an Account with ' . get_option( 'wpmotion_selected_host' ) . '" class="button-primary" style="width:250px;">&nbsp;⇐ Exclusive deal for WP Motion users: <b>2 Months Free</b>!';
+				echo '</form>';
+				echo '<br />';
 
-	    			//already have an account button
-	    			echo '<form action="" method="POST">';
-	    			echo '<input type="submit" name="wpm_existing_host" value="I already have an account" class="button-primary" style="width:250px;">';
-	    			echo '</form>';
-	    			echo '<br />';
-	    			echo '<div id="wpmotion-error">' . ( isset( $wpm_error ) ? $wpm_error : '' ) . '</div>';
-	    			?>
+				//already have an account button
+				echo '<form action="" method="POST">';
+				echo '<input type="submit" name="wpm_existing_host" value="I already have an account" class="button-primary" style="width:250px;">';
+				echo '</form>';
+				echo '<br />';
+				echo '<div id="wpmotion-error">' . ( isset( $wpm_error ) ? $wpm_error : '' ) . '</div>';
+				?>
 
 			<?php
 			} /* elseif ( $wpm_state == '2' && get_option( 'wpmotion_create_account_pressed' ) == '1' ) {
@@ -685,29 +689,36 @@ function wpm_admin() {
 
 			//state 3.2 - validate credentials for source host
 			if ( $wpm_state == '3.2' ) {
-			?>
-				<table>
-				<tr><td>Enter your <?php echo get_option( 'wpmotion_sourcehost' ); ?> login credentials</td></tr>
-				<tr><td>
-					<form action="" method="POST">
-						<input type="text" name="username" value="Username" onfocus="if (this.value=='Username') this.value='';" ></td></tr>
-						<tr><td><input type="password" name="password" value="Password" onfocus="if (this.value=='Password') this.value='';"></td></tr>
-						<input type="hidden" name="ref" value="<?php echo admin_url() . 'tools.php?page=wp-motion/wp-motion.php'; ?>">
-						<input type="hidden" name="sourcehost" value="<?php echo get_option( 'wpmotion_sourcehost' ); ?>">
-						<tr><td><input type="submit" name="submit_credentials" value="Next" class="button-primary" />
-					</form></td></tr>
-				</table>
-				<p>Note: your passwords are safe with us! Passwords are hashed and salted using modern crypto algorithms and can be purged at the end of the migration.</p>
-				<div id="wpmotion-result"></div>
-				<div id="wpmotion-error"><?php echo ( isset( $wpm_error ) ? $wpm_error : '' ) ?></div>
-
-			<?php
+				$sourcehost = get_option( 'wpmotion_sourcehost' );
+				if ( ! empty( $sourcehost ) && $sourcehost !== 'unsupported' ) {
+				?>
+					<table>
+					<tr><td>Enter your <?php echo get_option( 'wpmotion_sourcehost' ); ?> login credentials</td></tr>
+					<tr><td>
+						<form action="" method="POST">
+							<input type="text" name="username" value="Username" onfocus="if (this.value=='Username') this.value='';" ></td></tr>
+							<tr><td><input type="password" name="password" value="Password" onfocus="if (this.value=='Password') this.value='';"></td></tr>
+							<input type="hidden" name="ref" value="<?php echo admin_url() . 'tools.php?page=wp-motion/wp-motion.php'; ?>">
+							<input type="hidden" name="sourcehost" value="<?php echo get_option( 'wpmotion_sourcehost' ); ?>">
+							<tr><td><input type="submit" name="submit_credentials" value="Next" class="button-primary" />
+						</form></td></tr>
+					</table>
+					<p>Note: your passwords are safe with us! Passwords are hashed and salted using modern crypto algorithms and can be purged at the end of the migration.</p>
+					<div id="wpmotion-result"></div>
+					<div id="wpmotion-error"><?php echo ( isset( $wpm_error ) ? $wpm_error : '' ) ?></div>
+				<?php
+				} else {
+					echo "<p>Oops... your present host isn't supported just yet, but we can still move your site! A support ticket has been autogenerated and one of the magic elves at WP Motion will be in touch with you ASAP.</p>";
+					echo "<p>If you would prefer to speak with a human right now, dial 1-866-386-4592 (24/7) and we'll get you squared away!</p>";
+				}
 			}
 
+			//state 4 - kick off the migration
 			if ( $wpm_state == '4' ) {
 				do_action( 'wpm_migration_prep' );
 			}
 
+			//state 9 - show migration progress
 			if ( $wpm_state == '9' ) {
 				echo 'Migration to ' . get_option( 'wpmotion_selected_host' ) . ' is underway.<br /><br />';
 				?>
@@ -784,13 +795,13 @@ function wpm_admin() {
 				//echo '</form></div>';	
 			}
 
-			if ( $wpm_state == '10' ) {
+/*			if ( $wpm_state == '10' ) {
 				echo "<p>Currently this site and the one @ WP Engine are $pct% similar.</p>";
 				if ($pct < 50)
 					echo "<p>Something didn't work properly.</p>";
 				if ($pct > 95)
 					echo "<p>You are free to switch DNS.</p>";
-			}
+			} */
 
 	?>
 	</div> <!-- end .wrap -->

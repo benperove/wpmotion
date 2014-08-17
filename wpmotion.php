@@ -349,7 +349,7 @@ function wpm_admin() {
 			$url      = 'https://go.wpmotion.co/main/plugin_signup' . $json;
 
 			//make request
-			$result   = wp_remote_get( $url, array( 'user-agent' => user_agent(), ) );
+			$result   = wp_remote_get( $url, array( 'user-agent' => wpm_user_agent(), ) );
 
 			//get response	
 			if ( $result['response']['code'] == 200 ) {

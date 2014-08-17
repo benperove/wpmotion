@@ -12,7 +12,7 @@ class WPMotion {
 	 * class constructor
 	 */
 	public function __construct()	{
-		add_filter( 'json_request', array( $this, 'json_request' ) );
+		add_filter( 'wpm_json_request', array( $this, 'wpm_json_request' ) );
 	}
 
 	// -----------------------------------------------------------------
@@ -20,13 +20,13 @@ class WPMotion {
 	/**
 	 * responsible for plugin-to-server communication
 	 *
-	 * @param string $uri URI of requested server resource
+	 * @param string $uri uri of requested server resource
 	 * @param mixed[] $data2 an array of data to pass to the server
 	 * @return string server response in json format or error string
 	 */
-	public function json_request( $uri, array $data2 ) {
+	public function wpm_json_request( $uri, array $data2 ) {
 		//setup the request
-		$license_key = get_option( 'wpmotion_license_key' );	
+		$license_key = get_option( 'wpmotion_license_key' );
 		$callback    = 'WPMotion' . uniqid();
 		$data        = array( 'callback' => $callback, 'license_key' => get_option( 'wpmotion_license_key' ) );
 		$data        = array_merge( $data, $data2 );
@@ -58,4 +58,3 @@ class WPMotion {
 
 
 }
-

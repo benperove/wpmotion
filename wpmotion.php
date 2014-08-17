@@ -179,7 +179,7 @@ function wpm_do_migration() {
 	$url      = get_bloginfo( 'url' );
 	$url      = preg_replace( '(https?://)', '', $url );
 	$data     = array( 'url' => $url );
-	$result   = $wpmotion->json_request( 'do_migration_from_' . strtolower( get_option( 'wpmotion_sourcehost' ) ), $data );
+	$result   = $wpmotion->wpm_json_request( 'do_migration_from_' . strtolower( get_option( 'wpmotion_sourcehost' ) ), $data );
 
 	if ( $result['OK'] ) {
 		update_option( 'wpmotion_maintenance_mode', '1' );
@@ -342,7 +342,7 @@ function wpm_admin() {
 			$domain         = urlencode( $domain );
 
 			//setup the inital request
-			//$wpmotion->json_request() requires a license key, so the first request is setup manually
+			//$wpmotion->wpm_json_request() requires a license key, so the first request is setup manually
 			$callback = 'WPMotion' . uniqid();
 			$data     = array( 'callback' => $callback, 'first_name' => $wpm_first_name, 'last_name' => $wpm_last_name, 'email' => $admin_email, 'url' => $domain );
 			$json     = '?json=' . json_encode( $data );
@@ -388,7 +388,7 @@ function wpm_admin() {
 		//setup vars & make request
 		$host   = $_POST['host'];
 		$data   = array( 'selected_host' =>  $host );
-		$result = $wpmotion->json_request( 'selected_host', $data );
+		$result = $wpmotion->wpm_json_request( 'selected_host', $data );
 
 		//process response
 		if ( $result['OK'] ) {
@@ -414,7 +414,7 @@ function wpm_admin() {
 		$data        = array( 'license_key' => get_option( 'wpmotion_license_key' ) );
 
 		//make request	
-		$result      = $wpmotion->json_request( 'host_signup', $data );
+		$result      = $wpmotion->wpm_json_request( 'host_signup', $data );
 
 		//process result
 		if ( $result['OK'] ) {
@@ -442,7 +442,7 @@ function wpm_admin() {
 		$data     = array( 'username' => $username, 'password' => $password, 'host' => 'WP Engine', 'ref' => $ref, 'domain' => $domain );
 
 		//make request
-		$result   = $wpmotion->json_request( 'check_credentials', $data );
+		$result   = $wpmotion->wpm_json_request( 'check_credentials', $data );
 
 		//process response
 		if ( $result['OK'] && isset($result['installs']) ) {
@@ -473,7 +473,7 @@ function wpm_admin() {
 			header( 'Location: ' . $url );
 		} else {
 			$data   = array( 'selected_install' => $selected_install );
-			$result = $wpmotion->json_request( 'selected_install', $data );
+			$result = $wpmotion->wpm_json_request( 'selected_install', $data );
 		}
 
 		if ( $result['OK'] ) {
@@ -505,7 +505,7 @@ function wpm_admin() {
 		$data       = array( 'username' => $username, 'password' => $password, 'host' => $sourcehost, 'ref' => $ref, 'domain' => $domain, 'doc_root' => $doc_root );
 
 		//make request
-		$result     = $wpmotion->json_request( 'check_credentials', $data );
+		$result     = $wpmotion->wpm_json_request( 'check_credentials', $data );
 
 		//process request
 		if ( $result['OK'] ) {

@@ -2,7 +2,7 @@
 Contributors: bperove
 Donate link: http://goo.gl/jqzNs6
 Tags: migration, migrate, transfer, move
-Requires at least: 3.0.1
+Requires at least: 3.2
 Tested up to: 3.9.2
 Stable tag: 0.9.4
 License: GPLv2 or later

@@ -19,20 +19,23 @@ https://www.youtube.com/watch?v=pJP8lKccrd8
 
 == Installation ==
 
-Using The WordPress Dashboard
+= Using The WordPress Dashboard =
+
 1. Navigate to the 'Add New' in the plugins dashboard
 2. Search for 'WP Motion'
 3. Click 'Install Now'
 4. Activate the plugin on the Plugin dashboard
 
-Uploading in WordPress Dashboard
+= Uploading in WordPress Dashboard =
+
 1. Navigate to the 'Add New' in the plugins dashboard
 2. Navigate to the 'Upload' area
 3. Select wpmotion.zip from your computer
 4. Click 'Install Now'
 5. Activate the plugin in the Plugin dashboard 
 
-Using FTP
+= Using FTP =
+
 1. Download wpmotion.zip
 2. Extract the wpmotion directory to your computer
 3. Upload the wpmotion directory to the /wp-content/plugins/ directory
@@ -40,13 +43,11 @@ Using FTP
 
 == Frequently Asked Questions ==
 
-What migration paths are supported?
-
+= What migration paths are supported? =
 The first supported migration path is:
 	Bluehost -> WP Engine
 
-Will additional paths be supported?
-
+= Will additional paths be supported? =
 Definitely. Please vote for the hosts you would like [migration support](https://wpmotion.co/supported-hosts) for.
 
 == Screenshots ==

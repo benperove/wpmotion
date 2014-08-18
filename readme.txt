@@ -1,5 +1,6 @@
 === WP Motion ===
 Contributors: bperove
+Donate link: http://goo.gl/jqzNs6
 Tags: migration, migrate, transfer, move
 Requires at least: 3.0.1
 Tested up to: 3.9.2
@@ -50,7 +51,13 @@ The first supported migration path is:
 = Will additional paths be supported? =
 Definitely. Please vote for the hosts you would like [migration support](https://wpmotion.co/supported-hosts) for.
 
+== Upgrade Notice ==
+
+None yet.
+
 == Screenshots ==
+
+New screenshots to be added shortly.
 
 == Changelog ==
 

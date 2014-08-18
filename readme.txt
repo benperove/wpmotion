@@ -11,7 +11,7 @@ WP Motion automates all aspects of WordPress migrations between hosting provider
 
 == Description ==
 
-WP Motion will migrate your WordPress site with zero interaction, from start to finish.
+WP Motion will migrate your WordPress site with zero interaction, from start to finish. Simply input the credentials for you hosting accounts and WP Motion does the rest.
 
 An inside look:
 
@@ -19,11 +19,24 @@ https://www.youtube.com/watch?v=pJP8lKccrd8
 
 == Installation ==
 
-This section describes how to install the WP Motion migration plugin and get it working.
+Using The WordPress Dashboard
+1. Navigate to the 'Add New' in the plugins dashboard
+2. Search for 'WP Motion'
+3. Click 'Install Now'
+4. Activate the plugin on the Plugin dashboard
 
-1. Install the plugin through the 'Plugins' menu in WordPress
-2. Activate the plugin through the 'Plugins' menu in WordPress
-3. Click WP Motion on the sidebar in the administration panel
+Uploading in WordPress Dashboard
+1. Navigate to the 'Add New' in the plugins dashboard
+2. Navigate to the 'Upload' area
+3. Select wpmotion.zip from your computer
+4. Click 'Install Now'
+5. Activate the plugin in the Plugin dashboard 
+
+Using FTP
+1. Download wpmotion.zip
+2. Extract the wpmotion directory to your computer
+3. Upload the wpmotion directory to the /wp-content/plugins/ directory
+4. Activate the plugin in the Plugin dashboard
 
 == Frequently Asked Questions ==
 

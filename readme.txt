@@ -8,15 +8,23 @@ Stable tag: 0.9.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-WP Motion automates all aspects of WordPress migrations between hosting providers, enabling seamless migrations every time.
+WP Motion automates all aspects of WordPress migrations between hosting providers, enabling true hands-off migrations.
 
 == Description ==
 
 WP Motion will migrate your WordPress site with zero interaction, from start to finish. Simply input the credentials for you hosting accounts and WP Motion does the rest.
 
-An inside look:
+When it comes to migrations, WordPress site owners are faced with many options. While other migration plugins exist, WP Motion is the **only** plugin to offer server-assisted migrations which automate the entire process. In addition to static files and databases, WP Motion can also migrate SSL certificates and automate DNS, enabling true one-click migration.
+
+Currently supported migration paths:
+
+* Bluehost ➙ WP Engine
+
+An inside look (note the payment form has since been removed):
 
 https://www.youtube.com/watch?v=pJP8lKccrd8
+
+WP Motion is hosted at [Github](https://github.com/benperove/wpmotion). I do not monitor WP forums, so use ben(at)wpmotion.co for support questions.
 
 == Installation ==
 
@@ -44,9 +52,33 @@ https://www.youtube.com/watch?v=pJP8lKccrd8
 
 == Frequently Asked Questions ==
 
-= What migration paths are supported? =
-The first supported migration path is:
-	Bluehost -> WP Engine
+= Is WP Motion secure? =
+WP Motion is secured by 256-bit SSL encryption and does not accept unencrypted HTTP requests. All passwords are salted and hashed using the mcrypt library (256-bit AES) before being stored in the database. 
+The encryption key is held securely on a remote server. WP Motion requires your hosting credentials. For your increased privacy, you may wish to temporarily change your hosting provider’s password before the migration. You can then change your password back once the migration is done. 
+
+Following the migration, all hosting credentials and site contents are purged from our servers.
+
+= Is WP Motion reliable? =
+WP Motion is very reliable. It has been responsible for a large number of migrations. 
+
+Switching IP addresses can be tricky. WP Motion has a number of mechanisms in place to safeguard against problems at this critical point. These mechanisms check to make sure that a list of conditions are met, prior to even considering the migration “ready for DNS changes.” WP Motion compares the new site with the original and will only switch DNS if they are greater than 97% similar.
+
+= What happens to my DNS after the migration? =
+As part of the migration process, DNS is moved to WP Motion's infrastructure. Following the migration, DNS will be changed back to your original name servers, typically within the hour. At this point, DNS is under control by the original web host. 
+
+However, you have the option to leave DNS with WP Motion once the migration is complete, as some customers may wish to have their accounts terminated with the previous host.
+
+= My database is massive. Can it still be migrated? =
+Yes. During beta tests, we were able to consistently move a very large database.
+
+The stats for our test database:
+
+* DB rows: 1.53m <-- that's a lot of comments!
+* DB size: 1070MB
+* DB size compressed: 43.9MB
+* Compression ratio: 24:1
+* WP Engine max file size: 512MB
+* Theoretical max size before compression: 12.4TB
 
 = Will additional paths be supported? =
 Definitely. Please vote for the hosts you would like [migration support](https://wpmotion.co/supported-hosts) for.

@@ -20,6 +20,9 @@ if ( ! defined( 'WPM_PLUGIN_URL' ) )
 if ( ! defined( 'WPM_PLUGIN_FILENAME' ) )
 	define( 'WPM_PLUGIN_FILENAME', basename( __FILE__ ) );
 
+if ( ! defined( 'WPM_PLUGIN_VERSION' ) )
+	define( 'WPM_PLUGIN_VERSION', '0.9.4' );
+
 if ( ! defined( 'WPM_REQUIRED_PHP_VERSION' ) )
 	define( 'WPM_REQUIRED_PHP_VERSION', '5.2.4' );
 
@@ -69,7 +72,7 @@ foreach ( glob( WPM_PLUGIN_PATH . 'classes/*.php' ) as $filename ) {
 }
 
 global $wpm_plugin_version;
-$wpm_plugin_version = $wp_version;
+$wpm_plugin_version = WPM_PLUGIN_VERSION;
 
 /**
  * add plugin to add main menu & create submenus

@@ -46,8 +46,7 @@ class MaintenanceMode {
 	 */
 	public function mm_enter() {
 
-		$this->mm_load_admin_head();
-		add_filter( 'login_message' , array( $this, 'mm_custom_login_message' ) );
+		add_filter( 'login_message', array( $this, 'mm_custom_login_message' ) );
 		add_action( 'admin_notices', array( $this, 'mm_effective_notice' ) );
 		add_action( 'plugins_loaded', array( $this, 'mm_close_comments' ) );
 

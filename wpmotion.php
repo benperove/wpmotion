@@ -851,3 +851,15 @@ function wpm_activate() {
 
 }
 add_action( 'wpm_activate', 'wpm_activate' );
+
+/**
+ * plugin deactivation
+ * 
+ * @return void 
+ **/
+function wpm_deactivate() {
+
+	update_option( 'wpmotion_maintenance_mode', '0' );
+
+}
+add_action( 'wpm_deactivate', 'wpm_deactivate' );
